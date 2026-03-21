@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Drag Number Game</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.container{
+display:flex;
+justify-content:space-around;
+margin-top:50px;
+}
+
+.box{
+width:200px;
+height:300px;
+border:2px solid #333;
+border-radius:10px;
+padding:10px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:center;
+align-content:flex-start;
+}
+
+.ball{
+width:60px;
+height:60px;
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:18px;
+font-weight:bold;
+color:white;
+
+cursor:grab;
+
+/* 🔥 3D gradient */
+background: radial-gradient(circle at 30% 30%, #6ee7b7, #16a34a);
+
+/* 🔥 depth shadow */
+box-shadow: 
+inset -4px -6px 10px rgba(0,0,0,0.3),
+inset 4px 4px 10px rgba(255,255,255,0.3),
+0 6px 12px rgba(0,0,0,0.4);
+
+/* smooth animation */
+transition: all 0.2s ease;
+}
+
+/* 👇 ADD HERE */
+@keyframes burst {
+0% { transform: scale(1); opacity: 1; }
+50% { transform: scale(1.5); opacity: 0.7; }
+100% { transform: scale(0); opacity: 0; }
+}
+
+.burst{
+animation: burst 1.5s ease forwards;
+}
+
+.ball.red{
+background: radial-gradient(circle at 30% 30%, #ff7b7b, #c0392b);
+
+box-shadow: 
+inset -4px -6px 10px rgba(0,0,0,0.3),
+inset 4px 4px 10px rgba(255,255,255,0.3),
+0 6px 12px rgba(0,0,0,0.5);
+}
+
+.ball:hover{
+transform: scale(1.1);
+}
+
+.ball:active{
+transform: scale(0.9);
+cursor:grabbing;
+}
+
+.box{
+width:220px;
+height:320px;
+
+border-radius:15px;
+padding:10px;
+
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:center;
+align-content:flex-start;
+
+/* glass effect */
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(10px);
+
+border:2px solid rgba(255,255,255,0.2);
+
+box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+body{
+font-family:'Poppins',sans-serif;
+text-align:center;
+
+/* gradient background */
+background: linear-gradient(135deg, #1e3a8a, #9333ea);
+
+color:white;
+min-height:100vh;
+}
+
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+margin-top:40px;
+}
+
+h2, h3{
+margin:10px;
+letter-spacing:1px;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<h1 style="text-align:center;">Drag the Numbers</h1>
+
+<div class="container">
+
+
+<div id="box1" class="box"></div>
+
+<div id="box2" class="box"></div>
+
+
+</div>
+
+<h2>Make both boxes equal!</h2>
+
+<h3>Box 1 Sum: <span id="sum1">0</span></h3>
+<h3>Box 2 Sum: <span id="sum2">0</span></h3>
+
+<h2>Time: <span id="timer">60</span>s</h2>
+
+<h2 id="result"></h2>
+
+<script src="draggame.js"></script>
+
+</body>
+</html>

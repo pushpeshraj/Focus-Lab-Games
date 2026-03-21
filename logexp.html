@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Log & Exponential Game</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<h1>Log & Exponential Challenge</h1>
+
+<h2>Time: <span id="timer">60</span>s</h2>
+
+<div id="question"></div>
+
+<div id="options" style="display:none;">
+
+<button onclick="selectAnswer(this)"></button>
+<button onclick="selectAnswer(this)"></button>
+<button onclick="selectAnswer(this)"></button>
+<button onclick="selectAnswer(this)"></button>
+
+</div>
+
+<p>Score: <span id="score">0</span></p>
+
+<button id="startBtn" onclick="startGame()">Start</button>
+
+<script src="logexp.js"></script>
+
+</body>
+</html>
