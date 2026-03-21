@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Triangle Puzzle</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+text-align:center;
+background:#111;
+color:white;
+}
+
+/* board */
+#board{
+position:relative;
+width:300px;
+height:300px;
+margin:30px auto;
+border:2px dashed white;
+}
+
+/* pieces */
+.piece{
+width:0;
+height:0;
+position:absolute;
+cursor:grab;
+transition:0.2s;
+}
+
+.piece:active{
+cursor:grabbing;
+}
+
+/* shapes */
+#p1{
+border-left:50px solid transparent;
+border-right:50px solid transparent;
+border-bottom:100px solid red;
+top:10px;
+left:10px;
+}
+
+#p2{
+border-left:50px solid transparent;
+border-right:50px solid transparent;
+border-top:100px solid blue;
+top:10px;
+left:150px;
+}
+
+#p3{
+border-left:50px solid transparent;
+border-right:50px solid transparent;
+border-top:100px solid green;
+top:150px;
+left:20px;
+}
+
+#p4{
+border-left:50px solid transparent;
+border-right:50px solid transparent;
+border-bottom:100px solid yellow;
+top:150px;
+left:150px;
+}
+
+#result{
+margin-top:20px;
+font-size:20px;
+color:yellow;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Build the Triangle 🔺</h2>
+
+<div id="board">
+<div id="p1" class="piece"></div>
+<div id="p2" class="piece"></div>
+<div id="p3" class="piece"></div>
+<div id="p4" class="piece"></div>
+</div>
+
+<div id="result"></div>
+
+<script src="triangle.js"></script>
+
+</body>
+</html>

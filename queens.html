@@ -1,60 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Queens Game</title>
+    <meta charset="UTF-8">
+    <title>Queens Game - Light Mode</title>
+    <style>
+        :root {
+            --bg-color: #b8d3ee;
+            --text-color: #2d3436;
+            --cell-size: 60px; /* Increased size */
+        }
 
-<style>
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
 
-body{
-font-family:sans-serif;
-text-align:center;
-background:#111;
-color:white;
-}
+        #grid { 
+            display: grid; 
+            margin: 20px auto; 
+            width: fit-content; 
+            border: 3px solid #333;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            user-select: none;
+        }
 
-#timer{
-margin-top:10px;
-}
+        .cell {
+            width: var(--cell-size); 
+            height: var(--cell-size);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            cursor: pointer; 
+            border: 0.5px solid rgba(0,0,0,0.08);
+            transition: filter 0.1s;
+        }
 
-#grid{
-display:grid;
-grid-template-columns: repeat(6, 50px);
-gap:5px;
-justify-content:center;
-margin-top:20px;
-}
+        .cell:hover {
+            filter: brightness(0.95);
+        }
 
-.cell{
-width:50px;
-height:50px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:24px;
-cursor:pointer;
-color:black;
-}
+        #timer { font-size: 1.2rem; margin-bottom: 10px; }
+        #result { font-weight: 600; margin: 15px; height: 30px; color: #e17055; }
 
-#result{
-margin-top:20px;
-font-size:20px;
-color:yellow;
-}
+        button { 
+            padding: 12px 24px; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            border: none; 
+            background: #2d3436; 
+            color: white; 
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
 
-</style>
+        button:active { transform: scale(0.98); }
+    </style>
 </head>
-
 <body>
-
-<h2>Queens Puzzle 👑</h2>
-<h3 id="timer">Time: 0s</h3>
-
-<div id="grid"></div>
-
-<div id="result"></div>
-
-<script src="queens.js"></script>
-
+    <h2>👑 Queens Puzzle</h2>
+    <div id="timer">Time: 0s</div>
+    <div id="grid"></div>
+    <div id="result"></div>
+    <button onclick="startGame()">New Game</button>
+    <script src="queens.js"></script>
 </body>
 </html>

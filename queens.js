@@ -1,241 +1,132 @@
-const size = 6;
-let grid = document.getElementById("grid");
+const size = 8; // Increased grid size
+const colors = [
+    "#fab1a0", "#ffeaa7", "#81ecec", "#74b9ff", 
+    "#a29bfe", "#dfe6e9", "#55efc4", "#fdcb6e"
+];
 
-let board = [];
-let regions = [];
+let board, regions, solution, time = 0, timerInterval, gameFinished = false;
 
-// ⏱ TIMER
-let time = 0;
-let timerInterval;
-let gameFinished = false;
-
-const colors = ["#ff9999","#99ccff","#99ff99","#ffcc99","#cc99ff","#ffff99"];
-
-// ================= STEP 1: GENERATE VALID QUEENS =================
-
-function generateSolution(){
-
-let solution = [];
-
-function isSafe(row, col){
-for(let i=0;i<solution.length;i++){
-let c = solution[i];
-
-if(c === col) return false;
-if(Math.abs(i-row) === Math.abs(c-col)) return false;
-if(Math.abs(i-row)<=1 && Math.abs(c-col)<=1) return false;
-}
-return true;
-}
-
-function backtrack(row){
-
-if(row === size) return true;
-
-let cols = shuffle([...Array(size).keys()]);
-
-for(let col of cols){
-
-if(isSafe(row, col)){
-solution[row] = col;
-
-if(backtrack(row+1)) return true;
-}
+function generateSolution() {
+    let sol = new Array(size);
+    const isSafe = (r, c) => {
+        for (let i = 0; i < r; i++) {
+            // LinkedIn Rules: No same column, and no touching cells (adjacent diagonals)
+            if (sol[i] === c || (Math.abs(i - r) <= 1 && Math.abs(sol[i] - c) <= 1)) return false;
+        }
+        return true;
+    };
+    const backtrack = (r) => {
+        if (r === size) return true;
+        let cols = [...Array(size).keys()].sort(() => Math.random() - 0.5);
+        for (let c of cols) {
+            if (isSafe(r, c)) { 
+                sol[r] = c; 
+                if (backtrack(r + 1)) return true; 
+            }
+        }
+        return false;
+    };
+    backtrack(0);
+    return sol;
 }
 
-return false;
+function generateRegions(sol) {
+    regions = Array.from({ length: size }, () => Array(size).fill(-1));
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            let minDist = Infinity, best = 0;
+            for (let r = 0; r < size; r++) {
+                // Manhattan distance to create organic region shapes
+                let dist = Math.abs(i - r) + Math.abs(j - sol[r]);
+                if (dist < minDist) { minDist = dist; best = r; }
+            }
+            regions[i][j] = best;
+        }
+    }
 }
 
-backtrack(0);
-return solution;
+function createGrid() {
+    const gridEl = document.getElementById("grid");
+    gridEl.innerHTML = "";
+    gridEl.style.gridTemplateColumns = `repeat(${size}, 60px)`;
+    board = Array.from({ length: size }, () => Array(size).fill(0));
+
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            let cell = document.createElement("div");
+            cell.className = "cell";
+            cell.style.backgroundColor = colors[regions[i][j]];
+            
+            cell.onmousedown = (e) => {
+                if (gameFinished) return;
+                // Left click toggles Queen/Empty, Right click (or long press) could toggle X
+                // For simplicity, we cycle: Empty (0) -> Queen (1) -> X (2)
+                board[i][j] = (board[i][j] + 1) % 3;
+                updateCellDisplay(cell, board[i][j]);
+                check();
+            };
+            gridEl.appendChild(cell);
+        }
+    }
 }
 
-// ================= STEP 2: BUILD REGIONS =================
-
-function generateRegions(solution){
-
-regions = Array(size).fill().map(()=>Array(size).fill(-1));
-
-let regionId = 0;
-
-// assign queen cells first
-for(let r=0;r<size;r++){
-let c = solution[r];
-regions[r][c] = regionId++;
+function updateCellDisplay(cell, state) {
+    if (state === 1) {
+        cell.innerText = "👑";
+        cell.style.color = "#2d3436";
+    } else if (state === 2) {
+        cell.innerText = "✕";
+        cell.style.color = "rgba(0,0,0,0.3)";
+    } else {
+        cell.innerText = "";
+    }
 }
 
-// expand each region (controlled growth)
-let changed = true;
+function check() {
+    let queens = [];
+    for(let r=0; r<size; r++) 
+        for(let c=0; c<size; c++) 
+            if(board[r][c] === 1) queens.push({r, c, reg: regions[r][c]});
 
-while(changed){
-changed = false;
+    let violations = new Set();
+    
+    // Validate rules
+    for(let i=0; i<queens.length; i++) {
+        for(let j=i+1; j<queens.length; j++) {
+            let q1 = queens[i], q2 = queens[j];
+            if(q1.r === q2.r || q1.c === q2.c || q1.reg === q2.reg || 
+               (Math.abs(q1.r - q2.r) <= 1 && Math.abs(q1.c - q2.c) <= 1)) {
+                violations.add("rule-break");
+            }
+        }
+    }
 
-for(let i=0;i<size;i++){
-for(let j=0;j<size;j++){
-
-if(regions[i][j] === -1){
-
-let neighbors = [];
-
-[[1,0],[-1,0],[0,1],[0,-1]].forEach(d=>{
-let ni=i+d[0], nj=j+d[1];
-if(ni>=0 && nj>=0 && ni<size && nj<size){
-if(regions[ni][nj] !== -1){
-neighbors.push(regions[ni][nj]);
-}
-}
-});
-
-if(neighbors.length){
-let pick = neighbors[Math.floor(Math.random()*neighbors.length)];
-regions[i][j] = pick;
-changed = true;
-}
-
-}
-
-}
-}
-
-}
+    const res = document.getElementById("result");
+    if (violations.size > 0) {
+        res.innerText = "❌ Rule Violated";
+    } else {
+        res.innerText = "";
+        if (queens.length === size) {
+            gameFinished = true;
+            clearInterval(timerInterval);
+            res.style.color = "#27ae60";
+            res.innerText = `🎉 Solved in ${time}s!`;
+        }
+    }
 }
 
-// ================= SHUFFLE =================
-
-function shuffle(arr){
-for(let i=arr.length-1;i>0;i--){
-let j=Math.floor(Math.random()*(i+1));
-[arr[i],arr[j]]=[arr[j],arr[i]];
-}
-return arr;
-}
-
-// ================= CREATE GRID =================
-
-function createGrid(){
-
-grid.innerHTML = "";
-board = Array(size).fill().map(()=>Array(size).fill(0));
-
-for(let i=0;i<size;i++){
-for(let j=0;j<size;j++){
-
-let cell = document.createElement("div");
-cell.className = "cell";
-
-let reg = regions[i][j];
-cell.style.background = colors[reg % colors.length];
-
-cell.addEventListener("click", function(){
-toggleQueen(i,j,cell);
-});
-
-grid.appendChild(cell);
-}
-}
+function startGame() {
+    clearInterval(timerInterval);
+    time = 0; gameFinished = false;
+    document.getElementById("timer").innerText = "Time: 0s";
+    document.getElementById("result").innerText = "";
+    solution = generateSolution();
+    generateRegions(solution);
+    createGrid();
+    timerInterval = setInterval(() => {
+        time++;
+        document.getElementById("timer").innerText = `Time: ${time}s`;
+    }, 1000);
 }
 
-// ================= TOGGLE =================
-
-function toggleQueen(r,c,cell){
-
-if(gameFinished) return;
-
-if(board[r][c] === 1){
-board[r][c] = 0;
-cell.innerText = "";
-}else{
-board[r][c] = 1;
-cell.innerText = "👑";
-}
-
-checkRules();
-}
-
-// ================= CHECK RULES =================
-
-function checkRules(){
-
-let valid = true;
-
-// row
-for(let i=0;i<size;i++){
-let count = board[i].reduce((a,b)=>a+b,0);
-if(count > 1) valid = false;
-}
-
-// column
-for(let j=0;j<size;j++){
-let count = 0;
-for(let i=0;i<size;i++){
-count += board[i][j];
-}
-if(count > 1) valid = false;
-}
-
-// region
-let regionCount = {};
-for(let i=0;i<size;i++){
-for(let j=0;j<size;j++){
-if(board[i][j] === 1){
-let reg = regions[i][j];
-regionCount[reg] = (regionCount[reg]||0)+1;
-if(regionCount[reg] > 1) valid = false;
-}
-}
-}
-
-// no touching
-for(let i=0;i<size;i++){
-for(let j=0;j<size;j++){
-if(board[i][j] === 1){
-for(let dx=-1;dx<=1;dx++){
-for(let dy=-1;dy<=1;dy++){
-if(dx===0 && dy===0) continue;
-let ni=i+dx, nj=j+dy;
-if(ni>=0 && nj>=0 && ni<size && nj<size){
-if(board[ni][nj] === 1){
-valid = false;
-}
-}
-}
-}
-}
-}
-}
-
-// win
-let totalQueens = board.flat().reduce((a,b)=>a+b,0);
-
-if(valid && totalQueens === size){
-gameFinished = true;
-clearInterval(timerInterval);
-
-document.getElementById("result").innerText =
-"🎉 Solved in " + time + " seconds!";
-}
-else if(!valid){
-document.getElementById("result").innerText = "❌ Invalid move!";
-}
-else{
-document.getElementById("result").innerText = "";
-}
-
-}
-
-// ================= TIMER =================
-
-function startTimer(){
-timerInterval = setInterval(()=>{
-if(gameFinished) return;
-time++;
-document.getElementById("timer").innerText = "Time: " + time + "s";
-},1000);
-}
-
-// ================= START =================
-
-let solution = generateSolution();
-generateRegions(solution);
-createGrid();
-startTimer();
+window.onload = startGame;

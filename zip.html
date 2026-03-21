@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zip Logic Puzzle</title>
+    <style>
+        :root { --bg: #fdfdfd; --cell: 60px; --accent: #0077b5; }
+        body { font-family: sans-serif; text-align: center; background: var(--bg); }
+        #grid { 
+            display: grid; grid-template-columns: repeat(5, var(--cell)); 
+            margin: 20px auto; width: fit-content; border: 2px solid #333;
+            background: white; position: relative;
+        }
+        .cell {
+            width: var(--cell); height: var(--cell);
+            border: 0.5px solid #eee; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold; cursor: pointer;
+            z-index: 2; transition: background 0.2s;
+        }
+        .cell.active { background-color: rgba(0, 119, 181, 0.1); }
+        .cell.filled { color: var(--accent); }
+        .cell.fixed { background: #f0f0f0; border-radius: 50%; transform: scale(0.8); }
+        #status { height: 30px; margin: 10px; font-weight: bold; color: var(--accent); }
+        button { padding: 10px 20px; cursor: pointer; background: #333; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h2>🔢 Zip Path Puzzle</h2>
+    <div id="status">Connect the numbers in order!</div>
+    <div id="grid"></div>
+    <button onclick="initGame()">New Game</button>
+    <script src="zip.js"></script>
+</body>
+</html>
