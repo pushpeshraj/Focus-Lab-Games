@@ -1,106 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Puzzle - Pixel Perfect</title>
-    <style>
-        :root {
-            --bg-color: #b8d3ee;
-            --text-color: #2d3436;
-            --border-color: #333;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Queens Game - Light Mode</title>
+<style>
+:root {
+--bg-color: #b8d3ee;
+--text-color: #2d3436;
+--cell-size: 60px; /* Laptop size */
+}
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* Adjust for Mobile Screens */
+@media (max-width: 500px) {
+    :root {
+        /* Calculates size so 8 cells fit in 90% of a phone screen */
+        --cell-size: 11vmin; 
+    }
+    body { padding: 10px; }
+    .cell { font-size: 22px !important; } /* Shrink queen icon for mobile */
+}
 
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background-color: var(--bg-color); 
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+body {
+font-family: 'Segoe UI', system-ui, sans-serif;
+text-align: center;
+background-color: var(--bg-color);
+color: var(--text-color);
+margin: 0;
+padding: 20px;
+/* Prevent accidental zooming/scrolling while tapping the grid */
+touch-action: manipulation; 
+}
 
-        /* wrapper forces the grid to stay a clean size */
-        #game-wrapper {
-            width: 90vw;
-            max-width: 480px; 
-            aspect-ratio: 1 / 1;
-            position: relative;
-            /* Outline prevents the outer border from adding to the width/height calculation */
-            outline: 2px solid var(--border-color);
-        }
+#grid {
+display: grid;
+margin: 10px auto;
+width: fit-content;
+/* Using border-collapse logic for cleaner borders */
+border: 2px solid #333;
+background: white;
+box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+user-select: none;
+}
 
-        #grid { 
-            display: grid; 
-            width: 100%;
-            height: 100%;
-            background-color: white;
-            user-select: none;
-            touch-action: none;
-        }
+.cell {
+width: var(--cell-size);
+height: var(--cell-size);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 28px;
+cursor: pointer;
+/* Standardized border for mobile clarity */
+border: 1px solid rgba(0,0,0,0.1); 
+box-sizing: border-box;
+transition: filter 0.1s;
+}
 
-        .cell {
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer;
-            font-size: 6vw;
-            /* Box-shadow creates an internal border that doesn't "double up" on the right/bottom edge */
-            box-shadow: 0 0 0 0.5px var(--border-color);
-        }
+.cell:hover {
+filter: brightness(0.95);
+}
 
-        @media (min-width: 480px) { .cell { font-size: 32px; } }
+#timer { font-size: 1.2rem; margin-bottom: 10px; }
+#result { font-weight: 600; margin: 15px; height: 30px; color: #e17055; }
 
-        #timer { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
-        #result { height: 25px; margin: 10px; font-weight: 600; color: #e17055; }
+button {
+padding: 12px 24px;
+cursor: pointer;
+border-radius: 8px;
+border: none;
+background: #2d3436;
+color: white;
+font-weight: bold;
+transition: transform 0.1s;
+/* Larger tap target for fingers */
+min-height: 44px; 
+}
 
-        button { 
-            padding: 12px 30px; 
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            border: none;
-            background: #2d3436;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+button:active { transform: scale(0.98); }
+</style>
 </head>
 <body>
-
-    <h2>👑 Queens Puzzle</h2>
-    <div id="timer">Time: 0s</div>
-
-    <div id="game-wrapper">
-        <div id="grid"></div>
-    </div>
-
-    <div id="result"></div>
-    <button onclick="startGame()">New Game</button>
-
-    <script>
-        // Ensure this matches your queens.js grid generation
-        const gridSize = 8; 
-        const grid = document.getElementById('grid');
-        grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
-
-        // For testing the UI without your js file:
-        function setupTestGrid() {
-            grid.innerHTML = '';
-            for(let i=0; i<gridSize*gridSize; i++) {
-                const c = document.createElement('div');
-                c.className = 'cell';
-                grid.appendChild(c);
-            }
-        }
-        setupTestGrid();
-    </script>
-    <script src="queens.js"></script>
-
+<h2>👑 Queens Puzzle</h2>
+<div id="timer">Time: 0s</div>
+<div id="grid"></div>
+<div id="result"></div>
+<button onclick="startGame()">New Game</button>
+<script src="queens.js"></script>
 </body>
 </html>
