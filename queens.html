@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Queens Game</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+text-align:center;
+background:#111;
+color:white;
+}
+
+#timer{
+margin-top:10px;
+}
+
+#grid{
+display:grid;
+grid-template-columns: repeat(6, 50px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:50px;
+height:50px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+cursor:pointer;
+color:black;
+}
+
+#result{
+margin-top:20px;
+font-size:20px;
+color:yellow;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Queens Puzzle 👑</h2>
+<h3 id="timer">Time: 0s</h3>
+
+<div id="grid"></div>
+
+<div id="result"></div>
+
+<script src="queens.js"></script>
+
+</body>
+</html>
