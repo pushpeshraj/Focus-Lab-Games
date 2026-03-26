@@ -28,35 +28,47 @@ function generateMyCustomGrid() {
     const N = size;
     let B = Array.from({ length: N + 4 }, () => Array(N + 4).fill(1));
 
-    function randomInt(low, high) {
+    function random(low, high) {
         let val = Math.floor(Math.random() * (high - low));
-        if (val < 0) val += (high - low);
-        return val === 0 ? low : low + (high - low) % val;
+        if (val < 0)
+            val += (high - low);
+
+        let res = 0;
+        if (val === 0)
+            res = low;
+        else
+            res = low + (high - low) % val;
+
+        return res;
     }
 
     function correct(a, b) {
-        return (a >= 2 && a <= N + 1 && b >= 2 && b <= N + 1);
+        if (a >= 2 && a <= N + 1 && b >= 2 && b <= N + 1)
+            return 1;
+        else
+            return 0;
     }
 
     function fills(num) {
-        let count = 0;
+        let county = 0;
 
         for (let i = 2; i <= N + 1; i++) {
             for (let j = 2; j <= N + 1; j++) {
-                if (B[i][j] === num) count++;
+                if (B[i][j] === num)
+                    county++;
             }
         }
 
-        if (count === 0) {
+        if (county === 0) {
             for (let i = 2; i <= N + 1; i++) {
                 for (let j = 2; j <= N + 1; j++) {
                     if (
                         B[i][j] === 1 &&
-                        B[i][j-1] === 1 &&
-                        B[i][j+1] === 1 &&
-                        B[i+1][j] === 1 &&
-                        B[i-1][j] === 1 &&
-                        randomInt(1,7) === 3
+                        B[i][j - 1] === 1 &&
+                        B[i][j + 1] === 1 &&
+                        B[i + 1][j] === 1 &&
+                        B[i - 1][j] === 1 &&
+                        random(1, 7) === 3
                     ) {
                         B[i][j] = num;
                         return 1;
@@ -69,59 +81,109 @@ function generateMyCustomGrid() {
 
                     if (
                         B[i][j] === num &&
-                        B[i][j-1] === 1 &&
-                        B[i][j-2] === 1 &&
-                        B[i+1][j-1] === 1 &&
-                        B[i-1][j-1] === 1 &&
-                        randomInt(1,4) === 2 &&
-                        correct(j-1, i)
+                        B[i][j - 1] === 1 &&
+                        B[i][j - 2] === 1 &&
+                        B[i + 1][j - 1] === 1 &&
+                        B[i - 1][j - 1] === 1 &&
+                        random(1, 4) === 2 &&
+                        correct(j - 1, i)
                     ) {
-                        B[i][j-1] = num;
+                        B[i][j - 1] = num;
                         return 1;
                     }
 
                     if (
                         B[i][j] === num &&
-                        B[i][j+1] === 1 &&
-                        B[i][j+2] === 1 &&
-                        B[i+1][j+1] === 1 &&
-                        B[i-1][j+1] === 1 &&
-                        randomInt(1,4) === 1 &&
-                        correct(j+1, i)
+                        B[i][j + 1] === 1 &&
+                        B[i][j + 2] === 1 &&
+                        B[i + 1][j + 1] === 1 &&
+                        B[i - 1][j + 1] === 1 &&
+                        random(1, 4) === 1 &&
+                        correct(j + 1, i)
                     ) {
-                        B[i][j+1] = num;
+                        B[i][j + 1] = num;
                         return 1;
                     }
 
                     if (
                         B[i][j] === num &&
-                        B[i-1][j] === 1 &&
-                        B[i-2][j] === 1 &&
-                        B[i-1][j-1] === 1 &&
-                        B[i-1][j+1] === 1 &&
-                        randomInt(1,5) === 1 &&
-                        correct(j, i-1)
+                        B[i - 1][j] === 1 &&
+                        B[i - 2][j] === 1 &&
+                        B[i - 1][j - 1] === 1 &&
+                        B[i - 1][j + 1] === 1 &&
+                        random(1, 5) === 1 &&
+                        correct(j, i - 1)
                     ) {
-                        B[i-1][j] = num;
+                        B[i - 1][j] = num;
                         return 1;
                     }
 
                     if (
                         B[i][j] === num &&
-                        B[i+1][j] === 1 &&
-                        B[i+2][j] === 1 &&
-                        B[i+1][j-1] === 1 &&
-                        B[i+1][j+1] === 1 &&
-                        randomInt(1,5) === 3 &&
-                        correct(j, i+1)
+                        B[i + 1][j] === 1 &&
+                        B[i + 2][j] === 1 &&
+                        B[i + 1][j - 1] === 1 &&
+                        B[i + 1][j + 1] === 1 &&
+                        random(1, 5) === 3 &&
+                        correct(j, i + 1)
                     ) {
-                        B[i+1][j] = num;
+                        B[i + 1][j] = num;
                         return 1;
                     }
                 }
             }
         }
+
         return 0;
+    }
+
+    function areAllOnesConnected() {
+        let totalOnes = 0;
+        let startX = -1, startY = -1;
+
+        for (let i = 2; i <= N + 1; i++) {
+            for (let j = 2; j <= N + 1; j++) {
+                if (B[i][j] === 1) {
+                    totalOnes++;
+                    if (startX === -1) {
+                        startX = i;
+                        startY = j;
+                    }
+                }
+            }
+        }
+
+        if (totalOnes === 0) return true;
+
+        let visited = Array.from({ length: N + 2 }, () => Array(N + 2).fill(false));
+        let q = [[startX, startY]];
+        visited[startX][startY] = true;
+
+        let count = 1;
+        let dx = [-1, 1, 0, 0];
+        let dy = [0, 0, -1, 1];
+
+        while (q.length) {
+            let [x, y] = q.shift();
+
+            for (let i = 0; i < 4; i++) {
+                let nx = x + dx[i];
+                let ny = y + dy[i];
+
+                if (
+                    nx >= 2 && nx <= N + 1 &&
+                    ny >= 2 && ny <= N + 1 &&
+                    !visited[nx][ny] &&
+                    B[nx][ny] === 1
+                ) {
+                    visited[nx][ny] = true;
+                    count++;
+                    q.push([nx, ny]);
+                }
+            }
+        }
+
+        return count === totalOnes;
     }
 
     function check() {
@@ -129,17 +191,17 @@ function generateMyCustomGrid() {
             for (let j = 2; j <= N; j++) {
                 if (
                     B[i][j] === 1 &&
-                    B[i][j+1] === 1 &&
-                    B[i+1][j+1] === 1 &&
-                    B[i+1][j] === 1
+                    B[i][j + 1] === 1 &&
+                    B[i + 1][j + 1] === 1 &&
+                    B[i + 1][j] === 1
                 ) return false;
             }
         }
-        return true;
+        return areAllOnesConnected();
     }
 
-    let A = [2,3,4,5,4,3];
-    let game = 100000;
+    let A = [2, 3, 4, 5, 3, 4, 5];
+    let game = 1000000;
 
     while (game--) {
         for (let i = 0; i < N + 4; i++) {
@@ -148,22 +210,23 @@ function generateMyCustomGrid() {
             }
         }
 
-        let id = 2;
+        let county = 2;
 
         for (let val of A) {
             let retry = 6 * val;
             let rem = val;
 
             while (rem && retry--) {
-                rem -= fills(id);
+                rem -= fills(county);
             }
-            id++;
+
+            county++;
         }
 
         if (check()) break;
     }
 
-    // 🔥 Transform into your required format
+    // 🔥 SAME TRANSFORMATION (UNCHANGED)
     let countMap = {};
     for (let i = 2; i <= N + 1; i++) {
         for (let j = 2; j <= N + 1; j++) {
@@ -186,8 +249,8 @@ function generateMyCustomGrid() {
             let c = j - 2;
 
             if (v !== 1 && !used[v]) {
-                clues[`${r},${c}`] = countMap[v]; // place clue
-                gridData[r][c] = 1; // initial island cell
+                clues[`${r},${c}`] = countMap[v];
+                gridData[r][c] = 1;
                 used[v] = true;
             }
         }
